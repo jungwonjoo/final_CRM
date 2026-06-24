@@ -53,3 +53,6 @@ ui-debug.log*
 serviceAccountKey.json
 /functions/lib/
 /functions/node_modules/
+
+# dev server log
+.next-dev.log
