@@ -10,7 +10,7 @@ export default function SalesLayout({
     <div className="flex min-h-dvh flex-col">
       <SiteHeader />
       <QuickMenu />
-      <main className="w-full flex-1 px-5 py-5 md:pl-24">
+      <main className="w-full flex-1 px-5 py-5 md:pl-20">
         {children}
       </main>
       <footer className="border-t py-5 text-center text-xs text-muted-foreground">

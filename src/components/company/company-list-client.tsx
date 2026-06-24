@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Pencil } from "lucide-react";
 import { CompanyCard } from "@/components/company/company-card";
+import { EmptyState } from "@/components/common/empty-state";
 import { getStoredCompanies } from "@/lib/company-store";
 import type { Company } from "@/lib/types";
 
@@ -32,11 +33,15 @@ export function CompanyListClient({ base }: { base: Company[] }) {
         </Link>
       </div>
 
-      <div className="flex flex-col gap-3">
-        {list.map((c) => (
-          <CompanyCard key={c.id} company={c} />
-        ))}
-      </div>
+      {list.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {list.map((c) => (
+            <CompanyCard key={c.id} company={c} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

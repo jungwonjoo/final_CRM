@@ -34,9 +34,11 @@ function ReadValue({ value }: { value: string }) {
 export function QuoteItems({
   items,
   onChange,
+  title = "견적품목",
 }: {
   items: QuoteItem[];
   onChange: (items: QuoteItem[]) => void;
+  title?: string;
 }) {
   const [open, setOpen] = useState(true);
 
@@ -51,7 +53,7 @@ export function QuoteItems({
     <section className="rounded-xl border bg-card p-4">
       <div className="flex items-center justify-between border-b pb-2.5">
         <h3 className="text-sm font-semibold">
-          견적품목 <span className="font-normal text-muted-foreground">({items.length})</span>
+          {title} <span className="font-normal text-muted-foreground">({items.length})</span>
         </h3>
         <div className="flex items-center gap-1.5 text-muted-foreground">
           <ProductSelectDialog onAdd={(sel) => onChange([...items, ...productsToItems(sel)])} />

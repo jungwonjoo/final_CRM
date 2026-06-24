@@ -123,6 +123,130 @@ export interface Quotation {
   total: number; // 합계
 }
 
+/** 매출 (계약 기반 매출 실적) */
+export interface Order {
+  id: string;
+  customer: string; // 고객명 (대표 타이틀)
+  contractTitle: string; // 계약명
+  company: string; // 거래처명
+  contact: string; // 고객명
+  owner: string; // 담당자
+  startDate: string; // 계약기간 시작
+  endDate: string; // 계약기간 종료
+  amount: number; // 견적금액(단가)
+  qty: number; // 수량
+  total: number; // 합계
+}
+
+/** 알람 (담당자 지정 등으로 발생하는 알림) */
+export interface Alarm {
+  id: string;
+  text: string;
+  at: string; // 0000.00.00 00:00
+}
+
+/** 회의록 */
+export interface Proceeding {
+  id: string;
+  title: string; // 회의명
+  company: string; // 거래처명
+  owner: string; // 담당자
+  date: string; // 회의일 0000.00.00
+  place?: string; // 장소
+  attendeesClient?: string; // 참석자(고객)
+  attendeesOwn?: string; // 참석자(자사)
+  content?: string; // 회의 내용
+}
+
+/** 영업공지 */
+export interface Notice {
+  id: string;
+  title: string; // 제목
+  author: string; // 작성자
+  date: string; // 작성일 0000.00.00
+  views: number; // 조회수
+  comments: number; // 댓글수
+  pinned: boolean; // 필독(상단고정)
+  excerpt?: string; // 본문 미리보기
+}
+
+/** 영업보고 */
+export interface SalesReport {
+  id: string;
+  reportDate: string; // 보고일
+  template: string; // 보고 템플릿 (예: 영업팀 템플릿)
+  startDate: string; // 보고기간 시작
+  endDate: string; // 보고기간 종료
+  dept: string; // 팀
+  author: string; // 작성자
+  submitted: boolean; // 제출 여부
+}
+
+/** 채터 (채팅방) */
+export interface Chatter {
+  id: string;
+  title: string; // 채팅방 제목
+  memberCount: number; // 참여인원
+  participants: string; // 대화상대
+  shared: string; // 공유내용
+}
+
+/** 채터 메모(메시지) — 실시간이 아닌, 남긴 메모를 채팅 형태로 표시 */
+export interface ChatMessage {
+  id: string;
+  author: string; // 작성자
+  at: string; // 작성 시각 (예: 2026.06.24 14:30)
+  text: string; // 내용
+}
+
+/** 잠재고객 상태 */
+export type ProspectStatus = "미접촉" | "접촉중" | "접촉금지" | "고객전환";
+
+/** 잠재고객 */
+export interface Prospect {
+  id: string;
+  name: string; // 잠재고객명
+  company: string; // 거래처명
+  owner: string; // 담당자
+  registeredAt: string; // 등록일 0000.00.00
+  status: ProspectStatus;
+  email: string;
+  mobile: string; // 휴대폰
+  phone: string; // 일반전화
+}
+
+/** 고객지원 진행상태 */
+export type SupportStatus = "처리중" | "완료";
+
+/** 고객지원 */
+export interface Support {
+  id: string;
+  title: string; // 고객지원 제목
+  company: string; // 거래처명
+  contact: string; // 고객명
+  owner: string; // 담당자
+  startDate: string; // 처리기간 시작
+  endDate: string; // 처리기간 종료
+  status: SupportStatus; // 진행상태
+}
+
+/** 할일 구분 */
+export type TodoKind = "전화" | "메일" | "방문" | "견적" | "기타";
+
+/** 할일 중요도 (상태 아이콘) */
+export type TodoPriority = "높음" | "보통" | "낮음";
+
+/** 할일 */
+export interface Todo {
+  id: string;
+  kind: TodoKind;
+  priority: TodoPriority; // 중요도
+  title: string;
+  at: string; // 등록일시 0000.00.00 00:00
+  owner: string; // 담당자
+  done: boolean; // 완료 여부
+}
+
 /** 핑거세일즈에 가입된 직원 (담당자 선택용) */
 export interface Employee {
   id: string;

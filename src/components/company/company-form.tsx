@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Save, Trash2, List, MapPin, Copy, Asterisk, Link2 } from "lucide-react";
+import { Save, Trash2, List, MapPin, Asterisk, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { EmployeeSearchDialog } from "@/components/common/employee-search-dialog";
 import { cn } from "@/lib/utils";
 import type { Company } from "@/lib/types";
 
@@ -48,6 +49,7 @@ const options = {
 export function CompanyForm({ company }: { company?: Company }) {
   const isNew = !company;
   const [website, setWebsite] = useState("");
+  const [owner, setOwner] = useState(company?.ownerName ?? "");
 
   const openWebsite = () => {
     const raw = website.trim();
@@ -190,14 +192,15 @@ export function CompanyForm({ company }: { company?: Company }) {
 
           <Field label="담당자">
             <div className="relative">
-              <Input placeholder="담당자 입력" className="pr-9" defaultValue={company?.ownerName} />
-              <button
-                type="button"
-                title="담당자 검색"
-                className="absolute right-1.5 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
-              >
-                <Copy className="size-4" />
-              </button>
+              <Input
+                value={owner}
+                onChange={(e) => setOwner(e.target.value)}
+                placeholder="담당자 입력"
+                className="pr-9"
+              />
+              <div className="absolute right-1.5 top-1/2 -translate-y-1/2">
+                <EmployeeSearchDialog onSelect={setOwner} />
+              </div>
             </div>
           </Field>
 

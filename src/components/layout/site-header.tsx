@@ -2,35 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Search,
-  Bell,
-  User,
-  Settings,
-  HelpCircle,
-  Power,
-  Home,
-  ChevronDown,
-  Hand,
-} from "lucide-react";
-import { mainNav, serviceNav } from "@/lib/nav";
+import { Search, User, Power, Hand } from "lucide-react";
+import { mainNav } from "@/lib/nav";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { GlobalSearchDialog } from "@/components/layout/global-search-dialog";
+import { NotificationBell } from "@/components/layout/notification-bell";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { cn } from "@/lib/utils";
-
-const headerIcons = [
-  { icon: Search, label: "검색" },
-  { icon: Bell, label: "알림" },
-  { icon: User, label: "내 정보" },
-  { icon: Settings, label: "설정" },
-  { icon: HelpCircle, label: "도움말" },
-  { icon: Power, label: "로그아웃" },
-  { icon: Home, label: "홈" },
-];
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -39,6 +22,9 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b bg-card">
       {/* 1행: 로고 + 우측 아이콘 */}
       <div className="flex h-14 items-center gap-4 px-5">
+        {/* 태블릿 이하: 햄버거 → 좌측 드로어 메뉴 */}
+        <MobileNav />
+
         <Link href="/dashboard" className="flex items-center gap-2">
           <span className="flex size-7 items-center justify-center rounded-md bg-brand text-primary-foreground">
             <Hand className="size-4" />
@@ -52,7 +38,7 @@ export function SiteHeader() {
         </Link>
 
         <div className="ml-auto flex items-center gap-1">
-          {/* Sales 서비스 전환 pill */}
+          {/* Sales 서비스 전환 pill — 다른 서비스(Status/Reports) 추가 전까지 숨김
           <DropdownMenu>
             <DropdownMenuTrigger className="mr-2 flex items-center gap-1.5 rounded-full bg-brand px-3 py-1.5 text-sm font-medium text-primary-foreground outline-none">
               <span className="size-1.5 rounded-full bg-primary-foreground" />
@@ -67,16 +53,31 @@ export function SiteHeader() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+          */}
 
-          {headerIcons.map(({ icon: Icon, label }) => (
-            <button
-              key={label}
-              title={label}
-              className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            >
-              <Icon className="size-[18px]" />
-            </button>
-          ))}
+          {/* 통합검색 */}
+          <GlobalSearchDialog trigger={<Search className="size-[18px]" />} />
+
+          {/* 알림 */}
+          <NotificationBell />
+
+          {/* 내 정보 → 마이페이지 */}
+          <Link
+            href="/mypage"
+            title="내 정보"
+            className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <User className="size-[18px]" />
+          </Link>
+
+          {/* 로그아웃 → 로그인 페이지 */}
+          <Link
+            href="/login"
+            title="로그아웃"
+            className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <Power className="size-[18px]" />
+          </Link>
 
           {/* 사용자 */}
           <div className="ml-2 flex items-center gap-2 border-l pl-3">
@@ -91,8 +92,8 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* 2행: 탭 메뉴 */}
-      <nav className="flex items-center gap-1 px-5">
+      {/* 2행: 탭 메뉴 (데스크탑 전용 — 태블릿 이하는 햄버거 드로어) */}
+      <nav className="hidden items-center gap-1 px-5 lg:flex">
         {mainNav.map((item) => {
           const active = item.href
             ? pathname.startsWith(item.href)

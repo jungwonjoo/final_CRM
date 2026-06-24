@@ -1,12 +1,12 @@
 import Link from "next/link";
 import {
   CalendarDays,
-  MoreVertical,
   Building2,
   UserRound,
   UserRoundCheck,
   type LucideIcon,
 } from "lucide-react";
+import { CardActionsMenu } from "@/components/common/card-actions-menu";
 import type { Contract } from "@/lib/types";
 
 const fmt = (n: number) => n.toLocaleString("ko-KR");
@@ -40,13 +40,7 @@ export function ContractCard({ contract: c }: { contract: Contract }) {
           <Meta icon={Building2} value={c.company} />
           <Meta icon={UserRoundCheck} value={c.contact} />
           <Meta icon={UserRound} value={c.owner} />
-          <button
-            type="button"
-            title="더보기"
-            className="-mr-1 flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          >
-            <MoreVertical className="size-4" />
-          </button>
+          <CardActionsMenu detailHref={`/contract/${c.id}`} />
         </div>
       </div>
 

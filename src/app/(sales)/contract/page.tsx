@@ -3,6 +3,7 @@ import { Home, ChevronRight, Pencil } from "lucide-react";
 import { ContractSearch } from "@/components/contract/contract-search";
 import { ContractCard } from "@/components/contract/contract-card";
 import { RecentSection } from "@/components/layout/recent-section";
+import { EmptyState } from "@/components/common/empty-state";
 import { contracts, recentRegistered, recentSearched } from "@/lib/mock-data";
 
 export const metadata = { title: "계약 · FingerSales" };
@@ -35,11 +36,15 @@ export default function ContractListPage() {
             </Link>
           </div>
 
-          <div className="flex flex-col gap-3">
-            {contracts.map((c) => (
-              <ContractCard key={c.id} contract={c} />
-            ))}
-          </div>
+          {contracts.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <div className="flex flex-col gap-3">
+              {contracts.map((c) => (
+                <ContractCard key={c.id} contract={c} />
+              ))}
+            </div>
+          )}
         </section>
 
         <RecentSection registered={recentRegistered} searched={recentSearched} />

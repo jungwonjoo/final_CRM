@@ -1,12 +1,12 @@
 import Link from "next/link";
 import {
   CalendarDays,
-  MoreVertical,
   Building2,
   UserRound,
   UserRoundCheck,
   type LucideIcon,
 } from "lucide-react";
+import { CardActionsMenu } from "@/components/common/card-actions-menu";
 import type { Quotation } from "@/lib/types";
 
 const fmt = (n: number) => n.toLocaleString("ko-KR");
@@ -40,13 +40,7 @@ export function QuotationCard({ quotation: q }: { quotation: Quotation }) {
           <Meta icon={Building2} value={q.company} />
           <Meta icon={UserRoundCheck} value={q.contact} />
           <Meta icon={UserRound} value={q.owner} />
-          <button
-            type="button"
-            title="더보기"
-            className="-mr-1 flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          >
-            <MoreVertical className="size-4" />
-          </button>
+          <CardActionsMenu detailHref={`/quotation/${q.id}`} />
         </div>
       </div>
 

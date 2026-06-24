@@ -9,8 +9,8 @@ import {
   Smartphone,
   Phone,
   Briefcase,
-  MoreVertical,
 } from "lucide-react";
+import { CardActionsMenu } from "@/components/common/card-actions-menu";
 import { cn } from "@/lib/utils";
 import type { Contact, SalesEventKind } from "@/lib/types";
 
@@ -72,13 +72,7 @@ export function ContactCard({ contact }: { contact: Contact }) {
               <Briefcase className="size-3.5" />
               {events.length}건
             </button>
-            <button
-              type="button"
-              title="더보기"
-              className="flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            >
-              <MoreVertical className="size-4" />
-            </button>
+            <CardActionsMenu detailHref={`/contact/${contact.id}`} />
           </div>
         </div>
 

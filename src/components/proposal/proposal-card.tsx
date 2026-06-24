@@ -1,12 +1,12 @@
 import Link from "next/link";
 import {
   CalendarDays,
-  MoreVertical,
   Building2,
   UserRound,
   UserRoundCheck,
   type LucideIcon,
 } from "lucide-react";
+import { CardActionsMenu } from "@/components/common/card-actions-menu";
 import type { Proposal } from "@/lib/types";
 
 function Meta({ icon: Icon, value }: { icon: LucideIcon; value: string }) {
@@ -40,13 +40,7 @@ export function ProposalCard({ proposal: p }: { proposal: Proposal }) {
           <Meta icon={Building2} value={p.company} />
           <Meta icon={UserRoundCheck} value={p.contact} />
           <Meta icon={UserRound} value={p.owner} />
-          <button
-            type="button"
-            title="더보기"
-            className="-mr-1 flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          >
-            <MoreVertical className="size-4" />
-          </button>
+          <CardActionsMenu detailHref={`/proposal/${p.id}`} />
         </div>
       </div>
 

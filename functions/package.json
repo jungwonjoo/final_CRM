@@ -1,0 +1,24 @@
+{
+  "name": "fingersales-functions",
+  "version": "0.1.0",
+  "private": true,
+  "description": "FingerSales CRM Cloud Functions (집계/타임라인 동기화)",
+  "main": "lib/index.js",
+  "engines": {
+    "node": "20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions,firestore",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "firebase-admin": "12.7.0",
+    "firebase-functions": "6.1.1"
+  },
+  "devDependencies": {
+    "typescript": "5.5.4"
+  }
+}

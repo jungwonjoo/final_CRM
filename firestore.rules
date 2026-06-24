@@ -1,0 +1,122 @@
+rules_version = '2';
+
+// FingerSales CRM — Firestore 보안 규칙
+// 원칙: 인증된 사내 직원(employees 문서 = Auth uid)만 접근.
+//       읽기는 직원 전원 허용(CRM 특성), 수정/삭제는 소유자(ownerId) 또는 관리자.
+//       집계 필드(counts/memberCount)와 salesEvents 타임라인은 Cloud Function(Admin SDK) 전용.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- 헬퍼 ----------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // employees/{uid} 문서가 존재하는 인증 사용자 = 사내 직원
+    function isEmployee() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/employees/$(request.auth.uid));
+    }
+
+    function isAdmin() {
+      return isEmployee()
+        && get(/databases/$(database)/documents/employees/$(request.auth.uid))
+             .data.roles.hasAny(['admin']);
+    }
+
+    function isOwner(rsc) {
+      return rsc.data.ownerId == request.auth.uid;
+    }
+
+    // 생성 시 ownerId 위조 방지 + 서버 타임스탬프 강제
+    function validNew() {
+      return request.resource.data.ownerId is string
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+    }
+
+    // owner 기반 본체 컬렉션 화이트리스트
+    function isOwnerColl(coll) {
+      return coll in [
+        'companies', 'contacts', 'activities', 'opportunities', 'proposals',
+        'quotations', 'contracts', 'orders', 'supports', 'todos', 'prospects'
+      ];
+    }
+
+    // companies 의 집계 필드가 변경되지 않았는지(클라가 손대지 못하게)
+    function countsUnchanged() {
+      return request.resource.data.counts == resource.data.counts
+        && request.resource.data.memberCount == resource.data.memberCount;
+    }
+
+    // ---------- 마스터 / 직원 ----------
+    match /employees/{uid} {
+      allow read: if isEmployee();
+      // 본인 프로필 또는 관리자만 작성
+      allow write: if isAdmin() || (isSignedIn() && request.auth.uid == uid);
+    }
+
+    match /products/{id} {
+      allow read: if isEmployee();
+      allow write: if isAdmin();
+    }
+
+    // ---------- companies (허브, 집계 필드 보호) ----------
+    match /companies/{cid} {
+      allow read: if isEmployee();
+      allow create: if isEmployee() && validNew();
+      allow update: if isEmployee()
+        && (isOwner(resource) || isAdmin())
+        && countsUnchanged();
+      allow delete: if isEmployee() && (isOwner(resource) || isAdmin());
+
+      // 거래처 타임라인: Cloud Function(Admin SDK) 전용 쓰기
+      match /salesEvents/{eid} {
+        allow read: if isEmployee();
+        allow write: if false;
+      }
+    }
+
+    // ---------- 견적 품목 (견적 종속) ----------
+    match /quotations/{qid}/items/{itemId} {
+      allow read: if isEmployee();
+      // 부모 견적의 소유자 또는 관리자만 품목 편집
+      allow write: if isEmployee()
+        && (isAdmin()
+            || get(/databases/$(database)/documents/quotations/$(qid)).data.ownerId
+               == request.auth.uid);
+    }
+
+    // ---------- 채터 (참여자 기반) ----------
+    match /chatters/{cid} {
+      allow read: if isEmployee();
+      allow create: if isEmployee() && validNew();
+      allow update, delete: if isEmployee()
+        && (isOwner(resource)
+            || isAdmin()
+            || request.auth.uid in resource.data.participantIds);
+
+      match /messages/{mid} {
+        allow read: if isEmployee();
+        allow create: if isEmployee()
+          && request.auth.uid in
+             get(/databases/$(database)/documents/chatters/$(cid)).data.participantIds
+          && request.resource.data.authorId == request.auth.uid;
+        allow update, delete: if isEmployee()
+          && resource.data.authorId == request.auth.uid;
+      }
+    }
+
+    // ---------- owner 기반 본체 컬렉션 (companies 제외, 위에서 개별 처리) ----------
+    match /{coll}/{docId} {
+      allow read: if isEmployee()
+        && isOwnerColl(coll) && coll != 'companies';
+      allow create: if isEmployee()
+        && isOwnerColl(coll) && coll != 'companies'
+        && validNew();
+      allow update, delete: if isEmployee()
+        && isOwnerColl(coll) && coll != 'companies'
+        && (isOwner(resource) || isAdmin());
+    }
+  }
+}

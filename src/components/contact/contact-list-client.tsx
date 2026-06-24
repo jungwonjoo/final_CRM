@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Pencil } from "lucide-react";
 import { ContactCard } from "@/components/contact/contact-card";
+import { EmptyState } from "@/components/common/empty-state";
 import { getStoredContacts } from "@/lib/contact-store";
 import type { Contact } from "@/lib/types";
 
@@ -32,11 +33,15 @@ export function ContactListClient({ base }: { base: Contact[] }) {
         </Link>
       </div>
 
-      <div className="flex flex-col gap-3">
-        {list.map((c) => (
-          <ContactCard key={c.id} contact={c} />
-        ))}
-      </div>
+      {list.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {list.map((c) => (
+            <ContactCard key={c.id} contact={c} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

@@ -3,6 +3,7 @@ import { Home, ChevronRight, Pencil } from "lucide-react";
 import { QuotationSearch } from "@/components/quotation/quotation-search";
 import { QuotationCard } from "@/components/quotation/quotation-card";
 import { RecentSection } from "@/components/layout/recent-section";
+import { EmptyState } from "@/components/common/empty-state";
 import { quotations, recentRegistered, recentSearched } from "@/lib/mock-data";
 
 export const metadata = { title: "견적 · FingerSales" };
@@ -35,11 +36,15 @@ export default function QuotationListPage() {
             </Link>
           </div>
 
-          <div className="flex flex-col gap-3">
-            {quotations.map((q) => (
-              <QuotationCard key={q.id} quotation={q} />
-            ))}
-          </div>
+          {quotations.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <div className="flex flex-col gap-3">
+              {quotations.map((q) => (
+                <QuotationCard key={q.id} quotation={q} />
+              ))}
+            </div>
+          )}
         </section>
 
         <RecentSection registered={recentRegistered} searched={recentSearched} />

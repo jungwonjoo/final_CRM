@@ -3,6 +3,7 @@ import { Home, ChevronRight, Pencil } from "lucide-react";
 import { ProposalSearch } from "@/components/proposal/proposal-search";
 import { ProposalCard } from "@/components/proposal/proposal-card";
 import { RecentSection } from "@/components/layout/recent-section";
+import { EmptyState } from "@/components/common/empty-state";
 import { proposals, recentRegistered, recentSearched } from "@/lib/mock-data";
 
 export const metadata = { title: "제안 · FingerSales" };
@@ -38,11 +39,15 @@ export default function ProposalListPage() {
             </Link>
           </div>
 
-          <div className="flex flex-col gap-3">
-            {proposals.map((p) => (
-              <ProposalCard key={p.id} proposal={p} />
-            ))}
-          </div>
+          {proposals.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <div className="flex flex-col gap-3">
+              {proposals.map((p) => (
+                <ProposalCard key={p.id} proposal={p} />
+              ))}
+            </div>
+          )}
         </section>
 
         {/* 우: 최근등록/검색 */}

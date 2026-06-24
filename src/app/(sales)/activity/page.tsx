@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Home, ChevronRight, Pencil } from "lucide-react";
 import { ActivitySearch } from "@/components/activity/activity-search";
 import { ActivityTabs } from "@/components/activity/activity-tabs";
@@ -25,12 +26,13 @@ export default function ActivityListPage() {
         <div className="flex flex-col">
           <div className="mb-3 flex items-center gap-2">
             <h1 className="text-lg font-bold">영업활동</h1>
-            <button
+            <Link
+              href="/activity/new"
               title="영업활동 추가"
               className="ml-auto flex size-8 items-center justify-center rounded-md border text-brand transition-colors hover:bg-brand hover:text-primary-foreground"
             >
               <Pencil className="size-4" />
-            </button>
+            </Link>
           </div>
           <ActivityTabs items={activities} />
         </div>

@@ -35,7 +35,6 @@ export const mainNav: NavItem[] = [
       { label: "영업보고", href: "/sales-report" },
       { label: "영업공지", href: "/notice" },
       { label: "회의록", href: "/proceedings" },
-      { label: "제품자료", href: "/product" },
       { label: "영업보고현황", href: "/report-view" },
     ],
   },

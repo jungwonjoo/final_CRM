@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Copy, ChevronDown, ArrowDownUp } from "lucide-react";
+import { Search, ChevronDown, ArrowDownUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { EmployeeSearchDialog } from "@/components/common/employee-search-dialog";
 import { cn } from "@/lib/utils";
 
 const teams = [
@@ -33,6 +34,7 @@ const sorts = ["등록일", "고객"];
 export function ContactSearch() {
   const [open, setOpen] = useState(false);
   const [sortAsc, setSortAsc] = useState(true);
+  const [owner, setOwner] = useState("");
 
   return (
     <aside className="flex w-full flex-col rounded-xl border bg-card p-4">
@@ -73,14 +75,15 @@ export function ContactSearch() {
         </Select>
 
         <div className="relative">
-          <Input placeholder="담당자" className="pr-9" />
-          <button
-            type="button"
-            title="담당자 검색"
-            className="absolute right-1.5 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
-          >
-            <Copy className="size-4" />
-          </button>
+          <Input
+            value={owner}
+            onChange={(e) => setOwner(e.target.value)}
+            placeholder="담당자"
+            className="pr-9"
+          />
+          <div className="absolute right-1.5 top-1/2 -translate-y-1/2">
+            <EmployeeSearchDialog onSelect={setOwner} />
+          </div>
         </div>
 
         <Button className="mt-1 w-full gap-1.5">

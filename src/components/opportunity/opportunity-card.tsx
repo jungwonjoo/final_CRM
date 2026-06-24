@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { User, CalendarDays, Layers, MoreVertical } from "lucide-react";
+import { User, CalendarDays, Layers } from "lucide-react";
+import { CardActionsMenu } from "@/components/common/card-actions-menu";
 import { cn } from "@/lib/utils";
 import type { Opportunity } from "@/lib/types";
 
@@ -30,13 +31,9 @@ export function OpportunityCard({ opp }: { opp: Opportunity }) {
             {opp.title}
           </Link>
         </h3>
-        <button
-          type="button"
-          title="더보기"
-          className="-mr-1 flex size-7 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-        >
-          <MoreVertical className="size-4" />
-        </button>
+        <span className="shrink-0">
+          <CardActionsMenu detailHref={`/opportunity/${opp.id}`} />
+        </span>
       </div>
 
       {/* 단계 + 성공확률 */}

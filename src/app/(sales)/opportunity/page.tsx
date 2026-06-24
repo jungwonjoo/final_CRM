@@ -3,6 +3,7 @@ import { Home, ChevronRight, Pencil } from "lucide-react";
 import { OpportunitySearch } from "@/components/opportunity/opportunity-search";
 import { OpportunityCard } from "@/components/opportunity/opportunity-card";
 import { RecentSection } from "@/components/layout/recent-section";
+import { EmptyState } from "@/components/common/empty-state";
 import { opportunities, recentRegistered, recentSearched } from "@/lib/mock-data";
 
 export const metadata = { title: "영업기회 · FingerSales" };
@@ -38,11 +39,15 @@ export default function OpportunityListPage() {
             </Link>
           </div>
 
-          <div className="flex flex-col gap-3">
-            {opportunities.map((o) => (
-              <OpportunityCard key={o.id} opp={o} />
-            ))}
-          </div>
+          {opportunities.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <div className="flex flex-col gap-3">
+              {opportunities.map((o) => (
+                <OpportunityCard key={o.id} opp={o} />
+              ))}
+            </div>
+          )}
         </section>
 
         {/* 우: 최근등록/검색 */}
