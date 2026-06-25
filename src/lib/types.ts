@@ -263,7 +263,8 @@ export type SalesEventKind =
   | "proposal" // 제안
   | "opportunity" // 영업기회
   | "contract" // 계약
-  | "order"; // 매출
+  | "order" // 매출
+  | "support"; // 고객지원
 
 /** 영업현황 타임라인 이벤트 */
 export interface SalesEvent {

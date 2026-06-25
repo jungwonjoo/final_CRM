@@ -8,6 +8,7 @@ import {
   Briefcase,
   PenLine,
   Coins,
+  LifeBuoy,
   Paperclip,
   ArrowDownUp,
   type LucideIcon,
@@ -27,6 +28,7 @@ const kindConfig: Record<
   opportunity: { label: "영업기회", icon: Briefcase, ring: "border-amber-300", text: "text-amber-500" },
   contract: { label: "계약", icon: PenLine, ring: "border-emerald-300", text: "text-emerald-500" },
   order: { label: "매출", icon: Coins, ring: "border-teal-300", text: "text-teal-500" },
+  support: { label: "고객지원", icon: LifeBuoy, ring: "border-orange-300", text: "text-orange-500" },
 };
 
 export function SalesTimeline({ events }: { events: SalesEvent[] }) {

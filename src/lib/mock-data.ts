@@ -245,6 +245,106 @@ export const activities: ActivityItem[] = [
   { id: "a9", date: "2026.06.18", time: "10:00", type: "방문", title: "정기 점검", company: "현대엘리베이터", contact: "한이사", owner: "석정하", dept: "클라우드팀" },
 ];
 
+export function getActivity(id: string): ActivityItem | undefined {
+  return activities.find((a) => a.id === id);
+}
+
+// ── 영업현황 타임라인 빌더 ──────────────────────────────────────────────
+// 각 메뉴(영업활동 / 견적 / 제안)에 등록된 데이터를 거래처 기준으로 모아
+// 상세화면 공통 SalesTimeline 에 그대로 넣는다.
+const won = (n: number) => n.toLocaleString("ko-KR");
+
+const activityToEvent = (a: ActivityItem): SalesEvent => ({
+  id: `act-${a.id}`,
+  kind: "activity",
+  date: a.date,
+  lines: [`${a.company} / ${a.contact} / ${a.dept}`, a.title, a.type],
+});
+
+const quotationToEvent = (q: Quotation): SalesEvent => ({
+  id: `quo-${q.id}`,
+  kind: "quotation",
+  date: q.startDate,
+  hasAttachment: true,
+  lines: [`${q.company} / ${q.contact} / ${q.owner}`, q.title, won(q.total)],
+});
+
+const proposalToEvent = (p: Proposal): SalesEvent => ({
+  id: `pro-${p.id}`,
+  kind: "proposal",
+  date: p.startDate,
+  hasAttachment: true,
+  lines: [p.title, `${p.company} / ${p.contact} / ${p.owner}`, `${p.startDate} ~ ${p.endDate}`],
+});
+
+const contractToEvent = (c: Contract): SalesEvent => ({
+  id: `con-${c.id}`,
+  kind: "contract",
+  date: c.contractDate,
+  hasAttachment: true,
+  lines: [`${c.company} / ${c.contact} / ${c.owner}`, c.title, won(c.amount)],
+});
+
+const supportToEvent = (s: Support): SalesEvent => ({
+  id: `sup-${s.id}`,
+  kind: "support",
+  date: s.startDate,
+  lines: [`${s.company} / ${s.contact} / ${s.owner}`, s.title, s.status],
+});
+
+/**
+ * 거래처(고객사) 기준 영업현황 타임라인.
+ * 영업활동 / 견적 / 제안 / 계약 / 고객지원에 등록된 내역을 가져온다.
+ * company 가 없으면 전체 내역을 반환한다.
+ */
+export function getSalesEventsByCompany(company?: string): SalesEvent[] {
+  const matchA = company ? activities.filter((a) => a.company === company) : activities;
+  const matchQ = company ? quotations.filter((q) => q.company === company) : quotations;
+  const matchP = company ? proposals.filter((p) => p.company === company) : proposals;
+  const matchC = company ? contracts.filter((c) => c.company === company) : contracts;
+  const matchS = company ? supports.filter((s) => s.company === company) : supports;
+  return [
+    ...matchA.map(activityToEvent),
+    ...matchQ.map(quotationToEvent),
+    ...matchP.map(proposalToEvent),
+    ...matchC.map(contractToEvent),
+    ...matchS.map(supportToEvent),
+  ];
+}
+
+/**
+ * 영업활동 상세의 영업현황 타임라인.
+ * 현재 보고 있는 활동(내가 등록한 내용)을 첫 영업활동으로 두고,
+ * 같은 거래처의 견적·제안·계약·고객지원을 이어 붙인다.
+ */
+export function getActivitySalesEvents(activity: ActivityItem): SalesEvent[] {
+  const sameCompany = getSalesEventsByCompany(activity.company).filter(
+    (e) => e.kind !== "activity"
+  );
+  return [activityToEvent(activity), ...sameCompany];
+}
+
+/** 거래처 카드 하단 연관 건수 — 실제 등록 데이터에서 직접 집계(상세 영업현황과 동일 소스). */
+export interface CompanyRelationCounts {
+  opportunity: number;
+  activity: number;
+  quotation: number;
+  proposal: number;
+  contract: number;
+  support: number;
+}
+
+export function getCompanyCounts(company: string): CompanyRelationCounts {
+  return {
+    opportunity: opportunities.filter((o) => o.company === company).length,
+    activity: activities.filter((a) => a.company === company).length,
+    quotation: quotations.filter((q) => q.company === company).length,
+    proposal: proposals.filter((p) => p.company === company).length,
+    contract: contracts.filter((c) => c.company === company).length,
+    support: supports.filter((s) => s.company === company).length,
+  };
+}
+
 // 영업기회 목록
 export const opportunities: Opportunity[] = [
   {

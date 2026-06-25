@@ -6,7 +6,7 @@ import { Home, ChevronRight, Users, Phone, Mail, Plus } from "lucide-react";
 import { CompanyForm } from "@/components/company/company-form";
 import { FeedbackSection } from "@/components/company/feedback-section";
 import { SalesTimeline } from "@/components/company/sales-timeline";
-import { contacts, companySalesEvents } from "@/lib/mock-data";
+import { contacts, getSalesEventsByCompany } from "@/lib/mock-data";
 import { getStoredCompanies } from "@/lib/company-store";
 import type { Company } from "@/lib/types";
 
@@ -154,7 +154,7 @@ export function CompanyDetailClient({
       </div>
 
       {/* 영업현황 타임라인 */}
-      <SalesTimeline events={companySalesEvents} />
+      <SalesTimeline events={getSalesEventsByCompany(company.name)} />
     </div>
   );
 }

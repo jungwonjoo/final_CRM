@@ -22,6 +22,7 @@ const kindSquare: Record<SalesEventKind, string> = {
   opportunity: "bg-amber-400",
   contract: "bg-emerald-500",
   order: "bg-teal-400",
+  support: "bg-orange-400",
 };
 
 export function ContactCard({ contact }: { contact: Contact }) {
