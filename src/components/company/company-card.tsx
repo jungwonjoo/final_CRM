@@ -1,20 +1,22 @@
 import Link from "next/link";
 import { Users, MapPin, User, Wallet } from "lucide-react";
-import { contacts } from "@/lib/mock-data";
+import { contacts, getCompanyCounts, type CompanyRelationCounts } from "@/lib/mock-data";
 import type { Company } from "@/lib/types";
 
 const fmt = (n: number) => n.toLocaleString("ko-KR");
-const dash = (n: number | null) => (n == null ? "-" : fmt(n));
 
-const countRow: { key: keyof Company["counts"]; label: string }[] = [
-  { key: "opportunity", label: "영업기회" },
+const countRow: { key: keyof CompanyRelationCounts; label: string }[] = [
   { key: "activity", label: "영업활동" },
   { key: "quotation", label: "견적" },
+  { key: "proposal", label: "제안" },
   { key: "contract", label: "계약" },
   { key: "support", label: "고객지원" },
 ];
 
 export function CompanyCard({ company }: { company: Company }) {
+  // 하단 연관 건수는 실제 등록 데이터에서 집계 (상세 영업현황과 동일)
+  const counts = getCompanyCounts(company.name);
+
   // 같은 고객사에 등록된 고객 → "첫 고객명 외 N명"
   const members = contacts.filter((c) => c.company === company.name);
   const memberLabel =
@@ -60,7 +62,7 @@ export function CompanyCard({ company }: { company: Company }) {
           <li key={key}>
             {label}(
             <span className="font-semibold text-foreground">
-              {dash(company.counts[key])}
+              {fmt(counts[key])}
             </span>
             )
           </li>

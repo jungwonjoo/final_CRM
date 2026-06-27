@@ -4,7 +4,7 @@ import { Home, ChevronRight } from "lucide-react";
 import { OpportunityForm } from "@/components/opportunity/opportunity-form";
 import { FeedbackSection } from "@/components/company/feedback-section";
 import { SalesTimeline } from "@/components/company/sales-timeline";
-import { getOpportunity, companySalesEvents } from "@/lib/mock-data";
+import { getOpportunity, getSalesEventsByCompany } from "@/lib/mock-data";
 
 export const metadata = { title: "영업기회 상세 · FingerSales" };
 
@@ -66,7 +66,7 @@ export default async function OpportunityDetailPage({
       </div>
 
       {/* 영업현황 타임라인 */}
-      <SalesTimeline events={companySalesEvents} />
+      <SalesTimeline events={getSalesEventsByCompany(opp.company)} />
     </div>
   );
 }

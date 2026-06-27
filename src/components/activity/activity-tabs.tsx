@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   CalendarDays,
   List,
@@ -157,21 +158,26 @@ function CalendarView({ items }: { items: ActivityItem[] }) {
         ) : (
           <ul className="flex flex-col divide-y">
             {selActs.map((a) => (
-              <li key={a.id} className="flex gap-2.5 py-2.5">
-                <span
-                  className={cn(
-                    "mt-0.5 size-3.5 shrink-0 rounded-sm",
-                    TYPE_SQUARE[a.type]
-                  )}
-                />
-                <div className="min-w-0 text-sm">
-                  <p className="font-medium">
-                    {a.time} · {a.type} / {a.title}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {a.company} / {a.contact} · {a.owner}
-                  </p>
-                </div>
+              <li key={a.id}>
+                <Link
+                  href={`/activity/${a.id}`}
+                  className="-mx-2 flex gap-2.5 rounded-md px-2 py-2.5 transition-colors hover:bg-muted/50"
+                >
+                  <span
+                    className={cn(
+                      "mt-0.5 size-3.5 shrink-0 rounded-sm",
+                      TYPE_SQUARE[a.type]
+                    )}
+                  />
+                  <div className="min-w-0 text-sm">
+                    <p className="font-medium">
+                      {a.time} · {a.type} / {a.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {a.company} / {a.contact} · {a.owner}
+                    </p>
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>
@@ -186,28 +192,33 @@ function ListView({ items }: { items: ActivityItem[] }) {
   return (
     <ul className="flex flex-col divide-y">
       {items.map((a) => (
-        <li key={a.id} className="flex items-center gap-3 py-2.5">
-          <span className="flex w-24 shrink-0 flex-col text-xs text-muted-foreground">
-            <span>{a.date.slice(5)}</span>
-            <span>{a.time}</span>
-          </span>
-          <span
-            className={cn(
-              "shrink-0 rounded px-1.5 py-0.5 text-xs font-medium",
-              TYPE_STYLE[a.type]
-            )}
+        <li key={a.id}>
+          <Link
+            href={`/activity/${a.id}`}
+            className="-mx-2 flex items-center gap-3 rounded-md px-2 py-2.5 transition-colors hover:bg-muted/50"
           >
-            {a.type}
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-medium">{a.title}</span>
-            <span className="block truncate text-xs text-muted-foreground">
-              {a.company} / {a.contact}
+            <span className="flex w-24 shrink-0 flex-col text-xs text-muted-foreground">
+              <span>{a.date.slice(5)}</span>
+              <span>{a.time}</span>
             </span>
-          </span>
-          <span className="shrink-0 text-xs text-muted-foreground">
-            {a.owner} · {a.dept}
-          </span>
+            <span
+              className={cn(
+                "shrink-0 rounded px-1.5 py-0.5 text-xs font-medium",
+                TYPE_STYLE[a.type]
+              )}
+            >
+              {a.type}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-medium">{a.title}</span>
+              <span className="block truncate text-xs text-muted-foreground">
+                {a.company} / {a.contact}
+              </span>
+            </span>
+            <span className="shrink-0 text-xs text-muted-foreground">
+              {a.owner} · {a.dept}
+            </span>
+          </Link>
         </li>
       ))}
     </ul>

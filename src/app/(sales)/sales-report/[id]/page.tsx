@@ -7,7 +7,7 @@ import { OpportunityProducts } from "@/components/sales-report/opportunity-produ
 import { SupportStaff } from "@/components/sales-report/support-staff";
 import { SalesTimeline } from "@/components/company/sales-timeline";
 import { FeedbackSection } from "@/components/company/feedback-section";
-import { getSalesReport, contacts, companySalesEvents } from "@/lib/mock-data";
+import { getSalesReport, contacts, getSalesEventsByCompany } from "@/lib/mock-data";
 
 // 영업보고 상세
 export const metadata = { title: "영업보고 상세 · FingerSales" };
@@ -46,7 +46,7 @@ export default async function SalesReportDetailPage({
 
       <SupportStaff />
 
-      <SalesTimeline events={companySalesEvents} />
+      <SalesTimeline events={getSalesEventsByCompany()} />
 
       <FeedbackSection
         title="의견"

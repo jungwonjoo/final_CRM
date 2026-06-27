@@ -6,7 +6,7 @@ import { Home, ChevronRight } from "lucide-react";
 import { ContactForm } from "@/components/contact/contact-form";
 import { FeedbackSection } from "@/components/company/feedback-section";
 import { SalesTimeline } from "@/components/company/sales-timeline";
-import { companySalesEvents } from "@/lib/mock-data";
+import { getSalesEventsByCompany } from "@/lib/mock-data";
 import { getStoredContacts } from "@/lib/contact-store";
 import type { Contact } from "@/lib/types";
 
@@ -95,7 +95,7 @@ export function ContactDetailClient({
       </div>
 
       {/* 영업현황 타임라인 */}
-      <SalesTimeline events={companySalesEvents} />
+      <SalesTimeline events={getSalesEventsByCompany(contact.company)} />
     </div>
   );
 }

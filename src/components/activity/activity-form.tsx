@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Save, List, Asterisk, Plus, Link2 } from "lucide-react";
+import { Save, Trash2, List, Asterisk, Plus, Link2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,6 +20,7 @@ import { EmployeeSearchDialog } from "@/components/common/employee-search-dialog
 import { addStoredCompany } from "@/lib/company-store";
 import { addStoredContact } from "@/lib/contact-store";
 import { cn } from "@/lib/utils";
+import type { ActivityItem } from "@/lib/types";
 
 function Field({
   label,
@@ -47,15 +48,17 @@ function Picker({
   label,
   options,
   disabled,
+  current,
 }: {
   label: string;
   options: string[];
   disabled?: boolean;
+  current?: string;
 }) {
   return (
     <Select disabled={disabled}>
       <SelectTrigger className="w-full">
-        <SelectValue placeholder={label} />
+        <SelectValue placeholder={current ?? label} />
       </SelectTrigger>
       <SelectContent>
         {options.map((o) => (
@@ -75,11 +78,15 @@ const options = {
   purpose: ["인사", "제품소개", "교육", "계약"],
 };
 
-export function ActivityForm() {
-  const [company, setCompany] = useState("");
-  const [contact, setContact] = useState("");
+const toDateInput = (s?: string) => (s ? s.replaceAll(".", "-") : undefined);
+
+export function ActivityForm({ activity }: { activity?: ActivityItem }) {
+  const isNew = !activity;
+  const [company, setCompany] = useState(activity?.company ?? "");
+  const [contact, setContact] = useState(activity?.contact ?? "");
   const [companion, setCompanion] = useState("");
   const [participant, setParticipant] = useState("");
+  const [owner, setOwner] = useState(activity?.owner ?? "");
   const [done, setDone] = useState(false);
   const [registeredCompanyId, setRegisteredCompanyId] = useState<string | null>(null);
   const [registeredContactId, setRegisteredContactId] = useState<string | null>(null);
@@ -103,12 +110,23 @@ export function ActivityForm() {
   return (
     <form className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-bold">영업활동 등록</h1>
+        <h1 className="text-lg font-bold">{isNew ? "영업활동 등록" : "영업활동"}</h1>
         <div className="flex items-center gap-1.5">
           <Button type="submit" size="sm" className="gap-1.5">
             <Save className="size-4" />
             저장
           </Button>
+          {!isNew && (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="gap-1.5 text-destructive hover:text-destructive"
+            >
+              <Trash2 className="size-4" />
+              삭제
+            </Button>
+          )}
           <Button
             type="button"
             size="sm"
@@ -126,15 +144,29 @@ export function ActivityForm() {
       <section className="rounded-xl border bg-card p-5">
         <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
           <Field label="영업기회">
-            <Input placeholder="영업기회명" maxLength={100} />
+            <Input defaultValue={activity?.title} placeholder="영업기회명" maxLength={100} />
           </Field>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-[1fr_1fr_auto] gap-2">
             <Field label="진행상태">
               <Picker label="진행상태" options={options.progress} disabled />
             </Field>
             <Field label="프로세스">
               <Picker label="프로세스" options={options.process} disabled />
+            </Field>
+            <Field label="성공확률">
+              <div className="relative w-20">
+                <Input
+                  type="number"
+                  min={0}
+                  max={100}
+                  placeholder="0"
+                  className="pr-6 text-right"
+                />
+                <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                  %
+                </span>
+              </div>
             </Field>
           </div>
 
@@ -205,7 +237,7 @@ export function ActivityForm() {
           </Field>
 
           <Field label="활동분류" required>
-            <Picker label="선택하세요" options={options.kind} />
+            <Picker label="선택하세요" options={options.kind} current={activity?.type} />
           </Field>
 
           <Field label="활동목적" required>
@@ -213,12 +245,12 @@ export function ActivityForm() {
           </Field>
 
           <Field label="날짜" required>
-            <Input type="date" />
+            <Input type="date" defaultValue={toDateInput(activity?.date)} />
           </Field>
 
           <Field label="활동시간" required>
             <div className="flex items-center gap-1.5">
-              <Input type="time" className="flex-1" />
+              <Input type="time" className="flex-1" defaultValue={activity?.time} />
               <span className="text-muted-foreground">~</span>
               <Input type="time" className="flex-1" />
             </div>
@@ -259,11 +291,38 @@ export function ActivityForm() {
             </div>
           </Field>
 
-          <Field label="계획내용" full>
+          <Field label="담당자">
+            <div className="relative">
+              <Input
+                value={owner}
+                onChange={(e) => setOwner(e.target.value)}
+                placeholder="담당자 입력"
+                className="pr-9"
+              />
+              <div className="absolute right-1.5 top-1/2 -translate-y-1/2">
+                <EmployeeSearchDialog onSelect={setOwner} />
+              </div>
+            </div>
+          </Field>
+
+          <Field label="주소" full>
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <Input placeholder="도로명/지번 주소" readOnly />
+                <Button type="button" variant="outline" className="shrink-0 gap-1.5">
+                  <MapPin className="size-4" />
+                  주소검색
+                </Button>
+              </div>
+              <Input placeholder="상세주소" />
+            </div>
+          </Field>
+
+          <Field label="계획내용">
             <Textarea placeholder="계획 내용을 입력하세요" rows={5} maxLength={2000} />
           </Field>
 
-          <Field label="활동내용" full>
+          <Field label="활동내용">
             <Textarea placeholder="활동 내용을 입력하세요" rows={5} maxLength={2000} />
           </Field>
         </div>
